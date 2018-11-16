@@ -1,6 +1,6 @@
 const net = require('net')
 
-const NotesManager = require('./notesManager');
+const NotesManager = require('./notesManager')
 const { config, commands, messages } = require('./constants')
 
 const notesManager = new NotesManager(config.NOTES_PATH)
@@ -19,13 +19,7 @@ const server = net.createServer((socket) => {
 	// Handle commands sent to the TCP server
 	socket.on('data', (data) => {
 		// Get data and strip last new line to avoid creating files with \n in name
-		let [ command, docId, ...args ] = data.split(config.DELIMITER).map(stripNewLine)
-
-		// Exept 'help', all other commands need a docId
-		if (command !== commands.help && !docId) {
-			socket.write(messages.notFound)
-			return
-		}
+		const [ command, docId, ...args ] = data.split(config.DELIMITER).map(stripNewLine)
 
 		switch (command) {
 			case commands.help: {
@@ -48,6 +42,17 @@ const server = net.createServer((socket) => {
 			}
 			case commands.delete: {
 				notesManager.delete(docId)
+					.then(() => socket.write(messages.success))
+					.catch(() => socket.write(messages.notFound))
+				break
+			}
+			case commands.insert: {
+				// Get position if passed as argument
+				const position = (args.length === 2) ? +args[0] : null
+				// Get text to insert
+				const text = args[args.length - 1]
+
+				notesManager.insert(docId, position, text)
 					.then(() => socket.write(messages.success))
 					.catch(() => socket.write(messages.notFound))
 				break
