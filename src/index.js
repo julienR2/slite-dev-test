@@ -51,8 +51,9 @@ const server = net.createServer((socket) => {
 				let texts = []
 
 				// Get position if passed as argument and if the argument is a number
-				if (args.length === 2 && !!Number(args[0])) {
+				if (args.length === 2 && !isNaN(args[0])) {
 					[ position, ...texts ] = args
+					position = Number(position)
 				} else {
 					texts = args
 				}
