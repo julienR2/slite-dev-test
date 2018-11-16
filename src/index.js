@@ -46,6 +46,12 @@ const server = net.createServer((socket) => {
 					.catch(() => socket.write(messages.notFound))
 				break
 			}
+			case commands.delete: {
+				notesManager.delete(docId)
+					.then(() => socket.write(messages.success))
+					.catch(() => socket.write(messages.notFound))
+				break
+			}
 			default:
 				socket.write(messages.commandNotFount(command))
 		}

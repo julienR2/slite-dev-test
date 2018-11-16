@@ -27,6 +27,13 @@ class NotesManager {
       (err, data) => err ? reject(err) : resolve(data))
     )
   }
+
+  delete(docId, format = 'txt') {
+    return new Promise((resolve, reject) => fs.unlink(
+      `${this.path}/${docId}`,
+      (err, data) => err ? reject(err) : resolve(data))
+    )
+  }
 }
 
 module.exports = NotesManager;
