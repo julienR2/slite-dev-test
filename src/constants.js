@@ -11,6 +11,7 @@ const commands = {
 	get: 'get',
 	delete: 'delete',
 	insert: 'insert',
+	format: 'format',
 }
 
 const messages = {

@@ -57,6 +57,14 @@ const server = net.createServer((socket) => {
 					.catch(() => socket.write(messages.notFound))
 				break
 			}
+			case commands.format: {
+				const [ start, end, style ] = args
+
+				notesManager.format(docId, start, end, style)
+					.then(() => socket.write(messages.success))
+					.catch(() => socket.write(messages.notFound))
+				break
+			}
 			default:
 				socket.write(messages.commandNotFount(command))
 		}

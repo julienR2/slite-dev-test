@@ -74,10 +74,27 @@ class NotesManager {
         const contentAftPos = content.substring(absPosition)
 
         return this.create(docId, {
-          content: contentBefPos + text + contentAftPos,
           ...data,
+          content: contentBefPos + text + contentAftPos,
         })
       })
+  }
+
+  format(docId, start, end, style) {
+    const path = this.getPath(docId)
+
+    return this.getParsedData(docId)
+      .then(({ styles, ...data }) => this.create(docId, {
+          ...data,
+          styles: {
+            ...styles,
+            [style]: [
+              [start, end],
+              ...styles[style] || [],
+            ]
+          },
+        })
+      )
   }
 }
 
