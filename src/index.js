@@ -5,6 +5,10 @@ const { config, commands, messages } = require('./constants')
 
 const notesManager = new NotesManager(config.NOTES_PATH)
 
+function stripNewLine(str) {
+	return str.replace(new RegExp('\n$'), '')
+}
+
 // Set up TCP server
 const server = net.createServer((socket) => {
 	// Set data enconding to utf8
@@ -14,8 +18,8 @@ const server = net.createServer((socket) => {
 
 	// Handle commands sent to the TCP server
 	socket.on('data', (data) => {
-		let [ command, ...args ] = data.split(config.DELIMITER)
-		command = command.replace(/\n/, '')
+		// Get data and strip last new line to avoid creating files with \n in name
+		let [ command, ...args ] = data.split(config.DELIMITER).map(stripNewLine)
 
 		switch (command) {
 			case commands.help: {
@@ -24,9 +28,18 @@ const server = net.createServer((socket) => {
 			}
 			case commands.create: {
 				const [ docId ] = args
+
 				notesManager.create(docId)
 					.then(() => socket.write(messages.success))
 					.catch(() => socket.write(messages.error))
+				break
+			}
+			case commands.get: {
+				const [ docId, format ] = args
+
+				notesManager.get(docId, format)
+					.then(data => socket.write(data))
+					.catch(() => socket.write(messages.notFound))
 				break
 			}
 			default:
