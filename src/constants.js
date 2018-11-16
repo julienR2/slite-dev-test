@@ -31,9 +31,9 @@ Examples of commands:
 Your turn ✨
 ===================================
 `,
-	success: '200\n',
-	notFound: '404\n',
-	error: '500\n',
+	success: '200\r\n',
+	notFound: '404\r\n',
+	error: '500\r\n',
 }
 
 module.exports = {
