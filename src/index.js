@@ -19,7 +19,13 @@ const server = net.createServer((socket) => {
 	// Handle commands sent to the TCP server
 	socket.on('data', (data) => {
 		// Get data and strip last new line to avoid creating files with \n in name
-		let [ command, ...args ] = data.split(config.DELIMITER).map(stripNewLine)
+		let [ command, docId, ...args ] = data.split(config.DELIMITER).map(stripNewLine)
+
+		// Exept 'help', all other commands need a docId
+		if (command !== commands.help && !docId) {
+			socket.write(messages.notFound)
+			return
+		}
 
 		switch (command) {
 			case commands.help: {
@@ -27,15 +33,13 @@ const server = net.createServer((socket) => {
 				break
 			}
 			case commands.create: {
-				const [ docId ] = args
-
 				notesManager.create(docId)
 					.then(() => socket.write(messages.success))
 					.catch(() => socket.write(messages.error))
 				break
 			}
 			case commands.get: {
-				const [ docId, format ] = args
+				const [ format ] = args
 
 				notesManager.get(docId, format)
 					.then(data => socket.write(data))
