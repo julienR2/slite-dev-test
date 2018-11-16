@@ -47,10 +47,20 @@ const server = net.createServer((socket) => {
 				break
 			}
 			case commands.insert: {
-				// Get position if passed as argument
-				const position = (args.length === 2) ? +args[0] : null
-				// Get text to insert
-				const text = args[args.length - 1]
+				let position = null
+				let texts = []
+
+				// Get position if passed as argument and if the argument is a number
+				if (args.length === 2 && !!Number(args[0])) {
+					[ position, ...texts ] = args
+				} else {
+					texts = args
+				}
+
+				// We have to consider the case of having a text with ':' in it (e.g: insert:doca:Hello: world!)
+				// It will be 'split' in multiple part of the args array
+				// So we take the rest of args and join it to get the initial text back
+				const text = texts.join(config.DELIMITER)
 
 				notesManager.insert(docId, position, text)
 					.then(() => socket.write(messages.success))
