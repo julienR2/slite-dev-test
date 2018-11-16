@@ -1,3 +1,10 @@
+const config = {
+	HOST: 'localhost',
+	PORT: 1337,
+	NODE_PATH: '/notes',
+	DELIMITER: ':',
+}
+
 const commands = {
 	help: 'help',
 	create: 'create',
@@ -27,6 +34,7 @@ Your turn ✨
 }
 
 module.exports = {
+	config,
   commands,
   messages,
 }
