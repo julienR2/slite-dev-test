@@ -77,8 +77,6 @@ class NotesManager {
           content: contentBefPos + text + contentAftPos,
           ...data,
         })
-          .then(resolve)
-          .catch(reject)
       })
   }
 }
