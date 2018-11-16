@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon --watch ./src",
     "test": "jest ./test.js"
   },
   "keywords": [
@@ -22,5 +22,9 @@
   "devDependencies": {
     "jest": "^23.1.0",
     "nodemon": "^1.18.6"
+  },
+  "nodemonConfig": {
+    "ignore": ["note/*", "docs/*"],
+    "delay": "2500"
   }
 }

@@ -14,10 +14,14 @@ class NotesManager {
     }
   }
 
+  getPath(docId) {
+    return `${this.path}/${docId}`
+  }
+
   create(docId) {
     this.initFolder()
     return new Promise((resolve, reject) => fs.writeFile(
-      `${this.path}/${docId}`,
+      this.getPath(docId),
       EMPTY,
       (err, data) => err ? reject(err) : resolve(data)
     ))
@@ -25,20 +29,20 @@ class NotesManager {
 
   get(docId, format = 'txt') {
     return new Promise((resolve, reject) => fs.readFile(
-      `${this.path}/${docId}`,
+      this.getPath(docId),
       (err, data) => err ? reject(err) : resolve(data)
     ))
   }
 
   delete(docId, format = 'txt') {
     return new Promise((resolve, reject) => fs.unlink(
-      `${this.path}/${docId}`,
+      this.getPath(docId),
       (err, data) => err ? reject(err) : resolve(data)
     ))
   }
 
   insert(docId, position, text) {
-    const path = `${this.path}/${docId}`
+    const path = this.getPath(docId)
 
     return new Promise((resolve, reject) => fs.readFile(
       path,
