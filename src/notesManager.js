@@ -7,6 +7,29 @@ const EMPTY_FILE = {
   styles: {},
 }
 
+const FORMATS = {
+  txt: { bold: '', italic: '' },
+  md: { bold: '**', italic: '*' },
+}
+
+// Helper function to return array of object keys
+function mapObject(obj) {
+  const props = Object.keys(obj)
+  const result = new Array(props.length)
+
+  props.forEach((key, index) => {
+    result[index] = key
+  })
+  return result
+}
+
+// Helper function for inserting text in string at a position
+function insertAtPosition(str, position, text) {
+  const strBefPos = str.substring(0, position)
+  const strAftPos = str.substring(position)
+  return strBefPos + text + strAftPos
+}
+
 class NotesManager {
   constructor(notesPath = './myNotes') {
     this.path = notesPath
@@ -51,11 +74,40 @@ class NotesManager {
   }
 
   get(docId, format = 'txt') {
+    let formatMap = FORMATS[format] || FORMATS.txt
+
     return this.getParsedData(docId)
-      .then(({ content }) => content)
+      .then(({ content, styles }) => {
+        let parsedContent = content
+        let insertions = {}
+
+        // Get all the style insertions that have to be made
+        for (let style in styles) {
+          if (styles.hasOwnProperty(style) && !!formatMap[style]) {
+            styles[style].forEach(([ start, end ]) => {
+              // Add every style insertion as a 'key: value' pair (e.g: 12: '**')
+              insertions = {
+                ...insertions,
+                [start]: formatMap[style],
+                [end]: formatMap[style],
+              }
+            })
+          }
+        }
+
+        // We have now all the style insertions described in the 'insertion' object
+        // Let's get the keys, corresponding to the position of the insertions,
+        // sort them by descending order and apply them to our content
+        // this way each insertion won't affect the next one
+        mapObject(insertions).sort().reverse().forEach((pos) => {
+          parsedContent = insertAtPosition(parsedContent, pos, insertions[pos])
+        })
+
+        return parsedContent
+      })
   }
 
-  delete(docId, format = 'txt') {
+  delete(docId) {
     return new Promise((resolve, reject) => fs.unlink(
       this.getPath(docId),
       err => err ? reject(err) : resolve()
@@ -69,13 +121,10 @@ class NotesManager {
       .then(({ content, ...data }) => {
         // absPosition is the position where to insert the new content or the last position before empty string
         const absPosition = position || (content.length - EMPTY.length)
-        // Get content before and after position
-        const contentBefPos = content.substring(0, absPosition)
-        const contentAftPos = content.substring(absPosition)
 
         return this.create(docId, {
           ...data,
-          content: contentBefPos + text + contentAftPos,
+          content: insertAtPosition(content, absPosition, text)
         })
       })
   }
