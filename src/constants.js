@@ -1,7 +1,7 @@
 const config = {
 	HOST: 'localhost',
 	PORT: 1337,
-	NODE_PATH: '/notes',
+	NOTES_PATH: './notes',
 	DELIMITER: ':',
 }
 
@@ -30,7 +30,10 @@ Examples of commands:
 
 Your turn ✨
 ===================================
-`
+`,
+	success: '200\n',
+	notFound: '404\n',
+	error: '500\n',
 }
 
 module.exports = {

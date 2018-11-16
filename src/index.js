@@ -1,6 +1,9 @@
 const net = require('net')
 
+const NotesManager = require('./notesManager');
 const { config, commands, messages } = require('./constants')
+
+const notesManager = new NotesManager(config.NOTES_PATH)
 
 // Set up TCP server
 const server = net.createServer((socket) => {
@@ -15,13 +18,17 @@ const server = net.createServer((socket) => {
 		command = command.replace(/\n/, '')
 
 		switch (command) {
-			case commands.help:
+			case commands.help: {
 				socket.write(messages.help)
 				break
-			case commands.create:
-
-				socket.write(messages.help)
+			}
+			case commands.create: {
+				const [ docId ] = args
+				notesManager.create(docId)
+					.then(() => socket.write(messages.success))
+					.catch(() => socket.write(messages.error))
 				break
+			}
 			default:
 				socket.write(messages.commandNotFount(command))
 		}
