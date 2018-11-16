@@ -66,17 +66,17 @@ class NotesManager {
     const path = this.getPath(docId)
 
     return this.getParsedData(docId)
-      .then((parsedData) => {
-        const currentText = parsedData.content
+      .then(({ content, ...data }) => {
         // absPosition is the position where to insert the new content or the last position before empty string
-        const absPosition = position || (currentText.length - EMPTY.length)
+        const absPosition = position || (content.length - EMPTY.length)
         // Get content before and after position
-        const contentBefPos = currentText.substring(0, absPosition)
-        const contentAftPos = currentText.substring(absPosition)
+        const contentBefPos = content.substring(0, absPosition)
+        const contentAftPos = content.substring(absPosition)
 
-        parsedData.content = contentBefPos + text + contentAftPos
-
-        return this.create(docId, parsedData)
+        return this.create(docId, {
+          content: contentBefPos + text + contentAftPos,
+          ...data,
+        })
           .then(resolve)
           .catch(reject)
       })
