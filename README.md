@@ -21,6 +21,6 @@ Will output:
 * Add your code under the `src/` folder (index.js will be the entry point)
 * Follow the instructions here https://slite.com/api/s/2bHnWJreoXNoVqotPi9Mci
 * Run `npm install`
-* Run your TCP server on `localhost:1337`
+* Run your TCP server on `localhost:1337` (`npm run start`)
 * Run `npm test`
 * If all tests are passing, you succeeded 👏

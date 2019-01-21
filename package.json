@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
+    "dev": "nodemon --watch ./src",
     "test": "jest ./test.js"
   },
   "keywords": [
@@ -17,7 +18,13 @@
   ],
   "author": "Slite Team",
   "license": "ISC",
-  "dependencies": {
-    "jest": "^23.1.0"
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^23.1.0",
+    "nodemon": "^1.18.6"
+  },
+  "nodemonConfig": {
+    "ignore": ["note/*", "docs/*"],
+    "delay": "2500"
   }
 }
